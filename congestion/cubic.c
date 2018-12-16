@@ -28,17 +28,17 @@ inline static double __alpha()
 /**
  * received ack
  * @param cubic: cubic status
+ * @param mss: mss
  * @param acked: acked bytes count
  * @param cwnd: congestion window
- * @param mss: mss
  * @param cur: event time
  * @param delay: delay time
  *
  */
 bytecount_t cubic_received_ack(struct cubic * const cubic,
+                               bytecount_t mss,
                                bytecount_t acked,
                                bytecount_t cwnd,
-                               bytecount_t mss,
                                microtime_t cur,
                                microtime_t delay)
 {
