@@ -1,6 +1,19 @@
 #include "congestion/prr.h"
 
 /**
+ * init prr
+ * @param prr: prr
+ * 
+ */
+void prr_init(struct prr * const prr)
+{
+    prr->acked     = 0;
+    prr->delivered = 0;
+    prr->flight    = 0;
+    prr->sent      = 0;
+}
+
+/**
  * trigger packet loss
  * @param prr
  * 

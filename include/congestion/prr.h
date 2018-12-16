@@ -11,6 +11,13 @@ struct prr {
 };
 
 /**
+ * init prr
+ * @param prr: prr
+ * 
+ */
+void prr_init(struct prr * const prr);
+
+/**
  * trigger packet loss
  * @param prr: prr
  * @param flight: flight bytes
