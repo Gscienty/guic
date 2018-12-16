@@ -36,6 +36,6 @@ int rtt_status_init(struct rtt_status * const rtt);
  * @param nticks: rtt
  * 
  */
-int rtt_status_update(struct rtt_status * const rtt, int64_t nticks);
+int rtt_status_update(struct rtt_status * const rtt, const microtime_t nticks);
 
 #endif

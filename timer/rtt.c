@@ -25,9 +25,9 @@ int rtt_status_init(struct rtt_status * const rtt)
  * @param nticks: rtt
  * 
  */
-int rtt_status_update(struct rtt_status * const rtt, int64_t nticks)
+int rtt_status_update(struct rtt_status * const rtt, const microtime_t nticks)
 {
-    int64_t delta;
+    microtime_t delta;
 
     if (rtt->srtt) {
         delta = nticks - 1 - (rtt->srtt >> RTT_SHIFT);
@@ -49,6 +49,8 @@ int rtt_status_update(struct rtt_status * const rtt, int64_t nticks)
         rtt->rto = rtt->rtt_min;
     if (rtt->rto > MAX_TV)
         rtt->rto = MAX_TV;
+
+    rtt->last_rtt = nticks;
 
     return 0;
 }
