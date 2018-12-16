@@ -8,6 +8,7 @@ struct rtt_status {
     microtime_t rttvar;
     microtime_t rto;
     microtime_t rtt_min;
+    microtime_t last_rtt;
 };
 
 #define RTT_SCALE 8
