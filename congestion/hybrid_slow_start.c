@@ -1,6 +1,21 @@
 #include "congestion/hybrid_slow_start.h"
 
 /**
+ * init slow start
+ * @param slow_start: slow start status
+ * 
+ */
+void slow_start_init(struct slow_start * const slow_start)
+{
+    slow_start->end_pnum       = 0;
+    slow_start->hystart_found  = 0;
+    slow_start->last_send_pnum = 0;
+    slow_start->min_rtt        = 0;
+    slow_start->simple_count   = 0;
+    slow_start->started        = 0;
+}
+
+/**
  * start of each receive round
  * @param slow_start: slow start
  * @param pnum: last send packet number

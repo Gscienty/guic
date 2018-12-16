@@ -21,6 +21,13 @@ struct slow_start {
 };
 
 /**
+ * init slow start
+ * @param slow_start: slow start status
+ * 
+ */
+void slow_start_init(struct slow_start * const slow_start);
+
+/**
  * start of each receive round
  * @param slow_start: slow start
  * @param pnum: last send packet number
