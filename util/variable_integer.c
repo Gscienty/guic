@@ -1,5 +1,12 @@
 #include "util/variable_integer.h"
 
+/**
+ * decode variable integer
+ * @param buf: readable buf
+ * @param size: readable buf size
+ * @return: variable integer object's value OR VARINT_ERROR_VAL
+ *
+ */
 uint64_t varint_decode(const uint8_t *buf, const size_t size)
 {
     uint64_t ret = *buf & 0x3F;
@@ -45,6 +52,14 @@ uint64_t varint_decode(const uint8_t *buf, const size_t size)
     return ret;
 }
 
+/**
+ * encode variable integer
+ * @param buf: writable buf
+ * @param size: writable buf size
+ * @param val: variable integer object's value
+ * @return: VARINT_ENCODE_ERROR OR encode used size
+ *
+ */
 int varint_encode(uint8_t * const buf, const size_t size, uint64_t val)
 {
     int remain_length = 0;
@@ -88,4 +103,24 @@ int varint_encode(uint8_t * const buf, const size_t size, uint64_t val)
     }
 
     return remain_length + 1;
+}
+
+/**
+ * get variable integer using buf's size
+ * @param val: variable integer object's value
+ * @return: size
+ * 
+ */
+size_t varint_size(uint64_t val)
+{
+    if (val < 0x40)
+        return 1;
+    else if (val < 0x4000)
+        return 2;
+    else if (val < 0x40000000)
+        return 4;
+    else if (val < 0x4000000000000000)
+        return 8;
+    else
+        return VARINT_ENCODE_ERROR_NUM_TOO_LARGE;
 }
