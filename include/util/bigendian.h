@@ -1,0 +1,4 @@
+#ifndef _GUIC_UTIL_BIGENDIAN_H
+#define _GUIC_UTIL_BIGENDIAN_H
+
+#endif

@@ -1,5 +1,5 @@
-#ifndef _GUIC_UNIT_BUFFER_H
-#define _GUIC_UNIT_BUFFER_H
+#ifndef _GUIC_UTIL_BUFFER_H
+#define _GUIC_UTIL_BUFFER_H
 
 #include <stddef.h>
 

@@ -1,5 +1,5 @@
-#ifndef _GUIC_UNIT_PACKET_NUMBER_H
-#define _GUIC_UNIT_PACKET_NUMBER_H
+#ifndef _GUIC_UTIL_PACKET_NUMBER_H
+#define _GUIC_UTIL_PACKET_NUMBER_H
 
 #include "wire/type.h"
 #include <stddef.h>

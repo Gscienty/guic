@@ -1,5 +1,5 @@
-#ifndef _GUIC_UNIT_VARIABLE_INTEGER_H
-#define _GUIC_UNIT_VARIABLE_INTEGER_H
+#ifndef _GUIC_UTIL_VARIABLE_INTEGER_H
+#define _GUIC_UTIL_VARIABLE_INTEGER_H
 
 #include <stdint.h>
 #include <stddef.h>
