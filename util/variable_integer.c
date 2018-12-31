@@ -4,12 +4,13 @@
  * decode variable integer
  * @param buf: readable buf
  * @param size: readable buf size
- * @return: variable integer object's value OR VARINT_ERROR_VAL
+ * @param val: decoded value
+ * @return: variable integer object's length OR VARINT_ERROR_VAL
  *
  */
-uint64_t varint_decode(const uint8_t *buf, const size_t size)
+size_t varint_decode(const uint8_t *buf, const size_t size, uint64_t *val)
 {
-    uint64_t ret = *buf & 0x3F;
+    *val = *buf & 0x3F;
     int remain_length = 0;
     int i;
 
@@ -19,37 +20,34 @@ uint64_t varint_decode(const uint8_t *buf, const size_t size)
             break;
         case 0x40:  // 2 bytes
             if (size < 2)
-                ret = VARINT_ERROR_VAL;
+                return VARINT_ERROR_VAL;
             else {
                 remain_length = 1;
             }
             break;
         case 0x80:
             if (size < 4)
-                ret = VARINT_ERROR_VAL;
+                return VARINT_ERROR_VAL;
             else
                 remain_length = 3;
             break;
         case 0xC0:
             if (size < 8)
-                ret = VARINT_ERROR_VAL;
+                return VARINT_ERROR_VAL;
             else
                 remain_length = 7;
             break;
         default:
-            ret = VARINT_ERROR_VAL;
+            return VARINT_ERROR_VAL;
             remain_length = 0;
     }
 
-    if (ret == VARINT_ERROR_VAL)
-        return ret;
-
     for (i = 0; i < remain_length; i++) {
-        ret <<= 8;
-        ret ^= *(buf + 1 + i);
+        *val <<= 8;
+        *val ^= *(buf + 1 + i);
     }
 
-    return ret;
+    return remain_length + 1;
 }
 
 /**

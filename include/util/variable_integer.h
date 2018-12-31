@@ -12,10 +12,11 @@
  * decode variable integer
  * @param buf: readable buf
  * @param size: readable buf size
- * @return: variable integer object's value OR VARINT_ERROR_VAL
+ * @param val: decoded value
+ * @return: variable integer object's length OR VARINT_ERROR_VAL
  *
  */
-uint64_t varint_decode(const uint8_t *buf, const size_t size);
+size_t varint_decode(const uint8_t *buf, const size_t size, uint64_t *val);
 
 /**
  * encode variable integer

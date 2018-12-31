@@ -51,25 +51,33 @@ GUIC_TEST(variable_integer, encode_8byte)
 GUIC_TEST(variable_integer, decode_1byte)
 {
     uint8_t buf[] = { 0x25 };
-    ASSERT(37, varint_decode(buf, 1), ==);
+    uint64_t val;
+    ASSERT(1, varint_decode(buf, 1, &val), ==);
+    ASSERT(37, val, ==);
 }
 
 GUIC_TEST(variable_integer, decode_2byte)
 {
     uint8_t buf[] = { 0x7B, 0xBD };
-    ASSERT(15293, varint_decode(buf, 2), ==);
+    uint64_t val;
+    ASSERT(2, varint_decode(buf, 2, &val), ==);
+    ASSERT(15293, val, ==);
 }
 
 GUIC_TEST(variable_integer, decode_4byte)
 {
     uint8_t buf[] = { 0x9D, 0x7F, 0x3E, 0x7D };
-    ASSERT(494878333, varint_decode(buf, 4), ==);
+    uint64_t val;
+    ASSERT(4, varint_decode(buf, 4, &val), ==);
+    ASSERT(494878333, val, ==);
 }
 
 GUIC_TEST(variable_integer, decode_8byte)
 {
     uint8_t buf[] = { 0xC2, 0x19, 0x7C, 0x5E, 0xFF, 0x14, 0xE8, 0x8C };
-    ASSERT(151288809941952652UL, varint_decode(buf, 8), ==);
+    uint64_t val;
+    ASSERT(8, varint_decode(buf, 8, &val), ==);
+    ASSERT(151288809941952652UL, val, ==);
 }
 
 GUIC_TEST(variable_integer, number_too_large)
