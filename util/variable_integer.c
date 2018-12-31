@@ -8,13 +8,13 @@
  * @return: variable integer object's length OR VARINT_ERROR_VAL
  *
  */
-size_t varint_decode(const uint8_t *buf, const size_t size, uint64_t *val)
+size_t varint_decode(const void *buf, const size_t size, uint64_t *val)
 {
-    *val = *buf & 0x3F;
+    *val = *((uint8_t *) buf) & 0x3F;
     int remain_length = 0;
     int i;
 
-    switch (0xC0 & *buf) {
+    switch (0xC0 & *((uint8_t *) buf)) {
         case 0x00:  // i bytes
             remain_length = 0;
             break;
@@ -44,7 +44,7 @@ size_t varint_decode(const uint8_t *buf, const size_t size, uint64_t *val)
 
     for (i = 0; i < remain_length; i++) {
         *val <<= 8;
-        *val ^= *(buf + 1 + i);
+        *val ^= *((uint8_t *) (buf + 1 + i));
     }
 
     return remain_length + 1;
@@ -58,7 +58,7 @@ size_t varint_decode(const uint8_t *buf, const size_t size, uint64_t *val)
  * @return: VARINT_ENCODE_ERROR OR encode used size
  *
  */
-int varint_encode(uint8_t * const buf, const size_t size, uint64_t val)
+int varint_encode(void * const buf, const size_t size, uint64_t val)
 {
     int remain_length = 0;
     int i;
@@ -67,7 +67,7 @@ int varint_encode(uint8_t * const buf, const size_t size, uint64_t val)
         // 1 bytes
         if (size < 1)
             return VARINT_ENCODE_ERROR_BUFFER_LIMIT;
-        *buf = val;
+        *((uint8_t *) buf) = val;
         remain_length = 0;
         return 1;
     }
@@ -75,21 +75,21 @@ int varint_encode(uint8_t * const buf, const size_t size, uint64_t val)
         // 2 bytes
         if (size < 2)
             return VARINT_ENCODE_ERROR_BUFFER_LIMIT;
-        *buf = (val >> 8) ^ 0x40;
+        *((uint8_t *) buf) = (val >> 8) ^ 0x40;
         remain_length = 1;
     }
     else if (val < 0x40000000) {
         // 4 bytes
         if (size < 4)
             return VARINT_ENCODE_ERROR_BUFFER_LIMIT;
-        *buf = (val >> 24) ^ 0x80;
+        *((uint8_t * ) buf) = (val >> 24) ^ 0x80;
         remain_length = 3;
     }
     else if (val < 0x4000000000000000) {
         // 8 bytes
         if (size < 8)
             return VARINT_ENCODE_ERROR_BUFFER_LIMIT;
-        *buf = (val >> 56) ^ 0xC0;
+        *((uint8_t *) buf) = (val >> 56) ^ 0xC0;
         remain_length = 7;
     }
     else {
@@ -97,7 +97,7 @@ int varint_encode(uint8_t * const buf, const size_t size, uint64_t val)
     }
 
     for (i = 0; i < remain_length; i++) {
-        *(buf + 1 + i) = (val >> ((remain_length - 1 - i) * 8)) & 0xFF;
+        *((uint8_t *) (buf + 1 + i)) = (val >> ((remain_length - 1 - i) * 8)) & 0xFF;
     }
 
     return remain_length + 1;

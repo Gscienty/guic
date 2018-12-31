@@ -16,7 +16,7 @@
  * @return: variable integer object's length OR VARINT_ERROR_VAL
  *
  */
-size_t varint_decode(const uint8_t *buf, const size_t size, uint64_t *val);
+size_t varint_decode(const void *buf, const size_t size, uint64_t *val);
 
 /**
  * encode variable integer
@@ -26,7 +26,7 @@ size_t varint_decode(const uint8_t *buf, const size_t size, uint64_t *val);
  * @return: VARINT_ENCODE_ERROR OR encode used size
  *
  */
-int varint_encode(uint8_t * const buf, const size_t size, uint64_t val);
+int varint_encode(void * const buf, const size_t size, uint64_t val);
 
 /**
  * get variable integer using buf's size
