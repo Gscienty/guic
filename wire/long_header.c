@@ -68,10 +68,10 @@ static int __long_header_encode(void *buf,
 
     bigendian_encode(buf + used_size, lh_size - used_size, lh_ptr->pnum, pnum_size);
     used_size += pnum_size;
-    if (used_size >= lh_size)
+    if (used_size > lh_size)
         return -1;
 
-    return lh_size - 1 - used_size;
+    return lh_size - used_size;
 }
 
 /**
