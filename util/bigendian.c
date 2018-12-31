@@ -30,7 +30,7 @@ int bigendian_encode(void *buf, size_t size, uint64_t val, size_t val_size)
  * @param size: buf size
  * @param value: ref value
  * @param val_size: value size
- * @return: 0 is success
+ * @return: value size OR fail (< 0)
  *
  */
 int bigendian_decode(void *buf, size_t size, void *val, size_t val_size)
@@ -43,5 +43,5 @@ int bigendian_decode(void *buf, size_t size, void *val, size_t val_size)
         ((uint8_t *) val)[i] = ((uint8_t *) buf)[val_size - 1 - i];
     }
 
-    return 0;
+    return val_size;
 }
