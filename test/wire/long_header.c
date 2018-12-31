@@ -115,3 +115,103 @@ GUIC_TEST(long_header, encode_header3)
         ASSERT(expect[i], ((uint8_t *) buf.ptr)[i], ==);
     }
 }
+
+GUIC_TEST(long_header, decode_header)
+{
+
+    uint8_t buf[] = {
+        0xC2,
+        0xAB, 0xAB, 0xAB, 0xAB,
+        0x11,
+        0x01, 0x02, 0x03, 0x04,
+        0x05, 0x06, 0x07, 0x08,
+        0x53, 0x34,
+        0x13, 0x35,
+        0x01, 0x02, 0x03, 0x04
+    };
+
+    struct long_header header = lpack_get_header(buf, 22);
+
+    ASSERT(LONG_HEADER_PACKET_INITIAL, header.type, ==);
+    ASSERT(0xABABABAB, header.version, ==);
+    ASSERT(4, header.dst_connid.size, ==);
+    ASSERT(0x04030201, *((uint32_t *) header.dst_connid.bytes), ==);
+    ASSERT(4, header.src_connid.size, ==);
+    ASSERT(0x08070605, *((uint32_t *) header.src_connid.bytes), ==);
+    ASSERT(0x1334, header.len, ==);
+    ASSERT(0x1335, header.pnum, ==);
+    ASSERT(0x04030201, *((uint32_t *) header.payload), ==);
+}
+
+GUIC_TEST(long_header, decode_header2)
+{
+
+    uint8_t buf[] = {
+        0xC2,
+        0xAB, 0xAB, 0xAB, 0xAB,
+        0x01,
+        0x05, 0x06, 0x07, 0x08,
+        0x53, 0x34,
+        0x13, 0x35,
+        0x01, 0x02, 0x03, 0x04
+    };
+
+    struct long_header header = lpack_get_header(buf, 22);
+
+    ASSERT(LONG_HEADER_PACKET_INITIAL, header.type, ==);
+    ASSERT(0xABABABAB, header.version, ==);
+    ASSERT(0, header.dst_connid.size, ==);
+    ASSERT(4, header.src_connid.size, ==);
+    ASSERT(0x08070605, *((uint32_t *) header.src_connid.bytes), ==);
+    ASSERT(0x1334, header.len, ==);
+    ASSERT(0x1335, header.pnum, ==);
+    ASSERT(0x04030201, *((uint32_t *) header.payload), ==);
+}
+
+GUIC_TEST(long_header, decode_header3)
+{
+
+    uint8_t buf[] = {
+        0xC2,
+        0xAB, 0xAB, 0xAB, 0xAB,
+        0x10,
+        0x01, 0x02, 0x03, 0x04,
+        0x53, 0x34,
+        0x13, 0x35,
+        0x01, 0x02, 0x03, 0x04
+    };
+
+    struct long_header header = lpack_get_header(buf, 22);
+
+    ASSERT(LONG_HEADER_PACKET_INITIAL, header.type, ==);
+    ASSERT(0xABABABAB, header.version, ==);
+    ASSERT(4, header.dst_connid.size, ==);
+    ASSERT(0x04030201, *((uint32_t *) header.dst_connid.bytes), ==);
+    ASSERT(0, header.src_connid.size, ==);
+    ASSERT(0x1334, header.len, ==);
+    ASSERT(0x1335, header.pnum, ==);
+    ASSERT(0x04030201, *((uint32_t *) header.payload), ==);
+}
+
+GUIC_TEST(long_header, decode_header4)
+{
+
+    uint8_t buf[] = {
+        0xC2,
+        0xAB, 0xAB, 0xAB, 0xAB,
+        0x00,
+        0x53, 0x34,
+        0x13, 0x35,
+        0x01, 0x02, 0x03, 0x04
+    };
+
+    struct long_header header = lpack_get_header(buf, 22);
+
+    ASSERT(LONG_HEADER_PACKET_INITIAL, header.type, ==);
+    ASSERT(0xABABABAB, header.version, ==);
+    ASSERT(0, header.dst_connid.size, ==);
+    ASSERT(0, header.src_connid.size, ==);
+    ASSERT(0x1334, header.len, ==);
+    ASSERT(0x1335, header.pnum, ==);
+    ASSERT(0x04030201, *((uint32_t *) header.payload), ==);
+}

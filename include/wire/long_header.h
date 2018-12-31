@@ -14,6 +14,8 @@ struct long_header {
     struct conn_id_t src_connid;
     uint64_t len;
     uint32_t pnum;
+
+    void *payload;
 };
 
 struct __lpack_obj {
@@ -45,5 +47,14 @@ void lpack_free(void *ptr);
  * 
  */
 struct buf lpack_put_header(struct long_header * const lh_ptr, void *payload, size_t size);
+
+/**
+ * get long header
+ * @param buf: buf
+ * @param size: buf size
+ * @return: long header
+ * 
+ */
+struct long_header lpack_get_header(void *buf, size_t size);
 
 #endif
