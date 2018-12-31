@@ -24,9 +24,9 @@ static int __long_header_encode(void *buf,
     size_t pnum_size = packet_number_length(lh_ptr->pnum);
     uint8_t byte;
 
-    byte  = 0xC0;                                     // header form && fixed bit
-    byte ^= (lh_ptr->type << 4);                      // long packet type
-    byte ^= (packet_number_length(lh_ptr->pnum) - 1); // packet number length
+    byte  = 0xC0;                // header form && fixed bit
+    byte ^= (lh_ptr->type << 4); // long packet type
+    byte ^= (pnum_size - 1);     // packet number length
     *((uint8_t *) buf) = byte;
     used_size += 1;
     if (used_size >= lh_size)
@@ -56,6 +56,7 @@ static int __long_header_encode(void *buf,
     if (used_size >= lh_size)
         return -1;
 
+    // encode src connid
     memcpy(buf + used_size, lh_ptr->src_connid.bytes, lh_ptr->src_connid.size);
     used_size += lh_ptr->src_connid.size;
     if (used_size >= lh_size)
