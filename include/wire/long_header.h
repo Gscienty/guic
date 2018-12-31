@@ -18,27 +18,6 @@ struct long_header {
     void *payload;
 };
 
-struct __lpack_obj {
-    struct rbnode node;
-    void *ptr;
-};
-
-
-/**
- * malloc long header packet
- * @param size: packet payload size
- * @return: readable/writable buffer
- *
- */
-void *lpack_malloc(size_t size);
-
-/**
- * free long header
- * @param ptr: payload buffer ptr
- *
- */
-void lpack_free(void *ptr);
-
 /**
  * put long header
  * @param lh_ptr: long header ptr
