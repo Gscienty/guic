@@ -24,9 +24,9 @@ static int __long_header_encode(void *buf,
     size_t pnum_size = packet_number_length(lh_ptr->pnum);
     uint8_t byte;
 
-    byte  = 0xC0;                                 // header form && fixed bit
-    byte ^= (lh_ptr->type << 4);                  // long packet type
-    byte ^= (packet_number_length(lh_ptr->pnum)); // packet number length
+    byte  = 0xC0;                                     // header form && fixed bit
+    byte ^= (lh_ptr->type << 4);                      // long packet type
+    byte ^= (packet_number_length(lh_ptr->pnum) - 1); // packet number length
     *((uint8_t *) buf) = byte;
     used_size += 1;
     if (used_size >= lh_size)
@@ -116,7 +116,7 @@ struct long_header lpack_get_header(void *buf, size_t size)
         return header;
     if ((first_byte & 0xC0) != 0xC0)
         return header;
-    pnum_size = 0x03 & first_byte;
+    pnum_size = (0x03 & first_byte) + 1;
     header.type = (enum long_header_packet_type) ((first_byte & 0x30) >> 4);
 
     // decode version

@@ -1,5 +1,6 @@
 #include "wire/long_header.h"
 #include "wire/type.h"
+#include "wire/pack_store.h"
 #include "test/testcase.h"
 
 GUIC_TEST(long_header, encode_header)
@@ -20,14 +21,14 @@ GUIC_TEST(long_header, encode_header)
         .pnum = 0x1335
     };
 
-    void *pack = lpack_malloc(0);
+    void *pack = pack_malloc(LONG_HEADER_MAX_SIZE, 0);
 
     struct buf buf = lpack_put_header(&header, pack, 0);
 
     ASSERT(18, buf.size, ==);
 
     uint8_t expect[] = {
-        0xC2,
+        0xC1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x11,
         0x01, 0x02, 0x03, 0x04,
@@ -59,14 +60,14 @@ GUIC_TEST(long_header, encode_header2)
         .pnum = 0x1335
     };
 
-    void *pack = lpack_malloc(0);
+    void *pack = pack_malloc(LONG_HEADER_MAX_SIZE, 0);
 
     struct buf buf = lpack_put_header(&header, pack, 0);
 
     ASSERT(14, buf.size, ==);
 
     uint8_t expect[] = {
-        0xC2,
+        0xC1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x01,
         0x05, 0x06, 0x07, 0x08,
@@ -97,14 +98,14 @@ GUIC_TEST(long_header, encode_header3)
         .pnum = 0x1335
     };
 
-    void *pack = lpack_malloc(0);
+    void *pack = pack_malloc(LONG_HEADER_MAX_SIZE, 0);
 
     struct buf buf = lpack_put_header(&header, pack, 0);
 
     ASSERT(10, buf.size, ==);
 
     uint8_t expect[] = {
-        0xC2,
+        0xC1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x00,
         0x53, 0x34,
@@ -120,7 +121,7 @@ GUIC_TEST(long_header, decode_header)
 {
 
     uint8_t buf[] = {
-        0xC2,
+        0xC1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x11,
         0x01, 0x02, 0x03, 0x04,
@@ -147,7 +148,7 @@ GUIC_TEST(long_header, decode_header2)
 {
 
     uint8_t buf[] = {
-        0xC2,
+        0xC1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x01,
         0x05, 0x06, 0x07, 0x08,
@@ -172,7 +173,7 @@ GUIC_TEST(long_header, decode_header3)
 {
 
     uint8_t buf[] = {
-        0xC2,
+        0xC1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x10,
         0x01, 0x02, 0x03, 0x04,
@@ -197,7 +198,7 @@ GUIC_TEST(long_header, decode_header4)
 {
 
     uint8_t buf[] = {
-        0xC2,
+        0xC1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x00,
         0x53, 0x34,
