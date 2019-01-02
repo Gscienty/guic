@@ -5,6 +5,12 @@
 
 GUIC_SUPPORT_VERSION(0x00000000);
 
+
+#ifndef DEBUG
+// support version
+
+#endif
+
 static struct __guic_support_version *__start = NULL;
 static struct __guic_support_version *__end = NULL;
 static int __support_version_size = 0;
