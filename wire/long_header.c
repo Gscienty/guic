@@ -5,91 +5,107 @@
 #include <stdlib.h>
 #include <string.h>
 
-inline static size_t __long_header_size(const struct long_header * const lh_ptr)
+inline static size_t __long_header_size(const struct long_header * const hdr)
 {
     return 1                                  // long header first byte
         + 4                                   // version
         + 1                                   // DCIL && SCIL
-        + lh_ptr->dst_connid.size             // dst connid size
-        + lh_ptr->src_connid.size             // src connid size
-        + varint_size(lh_ptr->len)            // length
-        + packet_number_length(lh_ptr->pnum); // packet number
+        + hdr->dst_connid.size             // dst connid size
+        + hdr->src_connid.size             // src connid size
+        + varint_size(hdr->len)            // length
+        + packet_number_length(hdr->pnum); // packet number
 }
 
 static int __long_header_encode(void *buf,
-                                 const struct long_header * const lh_ptr,
-                                 const size_t lh_size)
+                                 const struct long_header * const hdr,
+                                 const size_t hdr_size)
 {
     size_t used_size = 0;
-    size_t pnum_size = packet_number_length(lh_ptr->pnum);
+    size_t pnum_size = packet_number_length(hdr->pnum);
     uint8_t byte;
 
     byte  = 0xC0;                // header form && fixed bit
-    byte ^= (lh_ptr->type << 4); // long packet type
+    byte ^= (hdr->type << 4); // long packet type
     byte ^= (pnum_size - 1);     // packet number length
     *((uint8_t *) buf) = byte;
     used_size += 1;
-    if (used_size >= lh_size)
+    if (used_size >= hdr_size)
         return -1;
 
     // encode version
-    if (bigendian_encode(buf + used_size, lh_size - used_size, lh_ptr->version, 4) < 0)
+    if (bigendian_encode(buf + used_size, hdr_size - used_size, hdr->version, 4) < 0)
         return -1;
     used_size += 4;
-    if (used_size >= lh_size)
+    if (used_size >= hdr_size)
         return -1;
 
     // encode cli
     byte = 0x00;
-    if (lh_ptr->dst_connid.size != 0)
-        byte ^= (lh_ptr->dst_connid.size - 3) << 4;
-    if (lh_ptr->src_connid.size != 0)
-        byte ^= lh_ptr->src_connid.size - 3;
+    if (hdr->dst_connid.size != 0)
+        byte ^= (hdr->dst_connid.size - 3) << 4;
+    if (hdr->src_connid.size != 0)
+        byte ^= hdr->src_connid.size - 3;
     *((uint8_t *) (buf + used_size)) = byte;
     used_size += 1;
-    if (used_size >= lh_size)
+    if (used_size >= hdr_size)
         return -1;
 
     // encode dst connid
-    memcpy(buf + used_size, lh_ptr->dst_connid.bytes, lh_ptr->dst_connid.size);
-    used_size += lh_ptr->dst_connid.size;
-    if (used_size >= lh_size)
+    memcpy(buf + used_size, hdr->dst_connid.bytes, hdr->dst_connid.size);
+    used_size += hdr->dst_connid.size;
+    if (used_size >= hdr_size)
         return -1;
 
     // encode src connid
-    memcpy(buf + used_size, lh_ptr->src_connid.bytes, lh_ptr->src_connid.size);
-    used_size += lh_ptr->src_connid.size;
-    if (used_size >= lh_size)
+    memcpy(buf + used_size, hdr->src_connid.bytes, hdr->src_connid.size);
+    used_size += hdr->src_connid.size;
+    if (used_size >= hdr_size)
         return -1;
 
-    used_size += varint_encode(buf + used_size, lh_size - used_size, lh_ptr->len);
-    if (used_size >= lh_size)
+    // encode token (init packet)
+    if (hdr->is_init) {
+        // encode token length
+        used_size += varint_encode(buf + used_size, hdr_size - used_size, hdr->token.size);
+        if (used_size >= hdr_size)
+            return -1;
+
+        // encode token
+        memcpy(buf + used_size, hdr->token.ptr, hdr->token.size);
+        used_size += hdr->token.size;
+        if (used_size >= hdr_size)
+            return -1;
+    }
+
+    // encode length
+    used_size += varint_encode(buf + used_size, hdr_size - used_size, hdr->len);
+    if (used_size >= hdr_size)
         return -1;
 
-    bigendian_encode(buf + used_size, lh_size - used_size, lh_ptr->pnum, pnum_size);
+    // encode packet number
+    bigendian_encode(buf + used_size, hdr_size - used_size, hdr->pnum, pnum_size);
     used_size += pnum_size;
-    if (used_size > lh_size)
+    if (used_size > hdr_size)
         return -1;
 
-    return lh_size - used_size;
+    return hdr_size - used_size;
 }
 
 /**
  * put long header
- * @param lh_ptr: long header ptr
+ * @param hdr: long header ptr
  * @param payload: payload ptr
  * @return: buffer && buffer size
  * 
  */
-struct buf lpack_put_header(const struct long_header * const lh_ptr, void *payload, size_t size)
+struct buf lpack_put_header(const struct long_header * const hdr, void *payload, size_t size)
 {
     struct buf ret;
-    size_t header_size = __long_header_size(lh_ptr);
+    size_t header_size = __long_header_size(hdr);
 
     ret.size = header_size + size;
     ret.ptr = payload - header_size;
 
-    __long_header_encode(ret.ptr, lh_ptr, header_size);
+    __long_header_encode(ret.ptr, hdr, header_size);
 
     return ret;
 }
@@ -119,6 +135,7 @@ struct long_header lpack_get_header(void *buf, size_t size)
         return header;
     pnum_size = (0x03 & first_byte) + 1;
     header.type = (enum long_header_packet_type) ((first_byte & 0x30) >> 4);
+    header.is_init = header.type == LONG_HEADER_PACKET_INITIAL;
 
     // decode version
     bigendian_decode(buf + used_size, size - used_size, &header.version, 4);
@@ -153,6 +170,17 @@ struct long_header lpack_get_header(void *buf, size_t size)
     }
     else
         header.src_connid.size = 0;
+
+    // decode token
+    if (header.is_init) {
+        // decode token length
+        used_size += varint_decode(buf + used_size, size - used_size, &header.token.size);
+
+        // decode token
+        header.token.ptr = malloc(header.token.size);
+        memcpy(header.token.ptr, buf + used_size, header.token.size);
+        used_size += header.token.size;
+    }
 
     // decode length
     used_size += varint_decode(buf + used_size, size - used_size, &header.len);

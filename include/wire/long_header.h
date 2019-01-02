@@ -15,6 +15,9 @@ struct long_header {
     uint64_t len;
     uint32_t pnum;
 
+    uint8_t is_init;
+    struct buf token;
+
     void *payload;
 };
 
