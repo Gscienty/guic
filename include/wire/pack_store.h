@@ -27,5 +27,6 @@ void pack_free(void *ptr);
 
 #define LONG_HEADER_MAX_SIZE 54
 #define SHORT_HEADER_MAX_SIZE 23
+#define VERSION_NEGOTIATION_HEADER_MAX_SIZE 42
 
 #endif
