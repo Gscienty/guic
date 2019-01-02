@@ -169,3 +169,40 @@ struct version_negotiation_header version_negotiation_get_header(void *buf, size
 
     return header;
 }
+
+static void __version_negotiation_payload_fill(void *buf, size_t size)
+{
+    struct __guic_support_version *itr;
+    size_t used_size = 0;
+
+    for (itr = __start; itr != __end; itr++) {
+        if (itr->version == 0x00000000)
+            continue;
+        bigendian_encode(buf + used_size, size - used_size, itr->version, 4);
+        used_size += 4;
+    }
+}
+
+/**
+ * construct version negotiation payload
+ * @return: version negotiation payload
+ * 
+ */
+struct buf version_negotiation_construct()
+{
+    struct buf ret = {
+        .size = 0,
+        .ptr = NULL
+    };
+    size_t payload_size = __support_version_size * 4;
+    void *buf = pack_malloc(VERSION_NEGOTIATION_HEADER_MAX_SIZE, payload_size);
+    if (buf == NULL)
+        return ret;
+
+    ret.size = payload_size;
+    ret.ptr = buf;
+
+    __version_negotiation_payload_fill(buf, payload_size);
+
+    return ret;
+}

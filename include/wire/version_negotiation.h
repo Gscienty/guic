@@ -49,4 +49,12 @@ struct buf version_negotiation_put_header(const struct version_negotiation_heade
  */
 struct version_negotiation_header version_negotiation_get_header(void *buf, size_t size);
 
+/**
+ * construct version negotiation payload
+ * @return: version negotiation payload
+ * 
+ */
+struct buf version_negotiation_construct();
+
+
 #endif
