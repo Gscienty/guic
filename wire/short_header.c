@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static size_t __short_header_size(const struct short_header *sh_ptr)
+inline static size_t __short_header_size(const struct short_header *sh_ptr)
 {
     return 1                                  // short header first byte
         + sh_ptr->dst_connid.size             // dst connid size
