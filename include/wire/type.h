@@ -36,8 +36,6 @@ enum wire_type {
     G_WTP_CONNECTION_CLOSE_APPLICATION = 0x1D
 };
 
-typedef uint64_t stream_t;
-
 enum stream_type {
     STREAM_TYPE_CLI_BI,
     STREAM_TYPE_SER_BI,
@@ -49,6 +47,7 @@ enum stream_type {
 
 typedef uint32_t version_t;
 typedef uint32_t packet_number_t;
+typedef uint64_t stream_id_t;
 
 struct conn_id_t {
     uint8_t bytes[18];
