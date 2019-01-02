@@ -48,6 +48,7 @@ enum stream_type {
 typedef uint32_t version_t;
 typedef uint32_t packet_number_t;
 typedef uint64_t stream_id_t;
+typedef uint16_t app_err_t;
 
 struct conn_id_t {
     uint8_t bytes[18];
