@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static size_t __long_header_size(const struct long_header * const lh_ptr)
+inline static size_t __long_header_size(const struct long_header * const lh_ptr)
 {
     return 1                                  // long header first byte
         + 4                                   // version
