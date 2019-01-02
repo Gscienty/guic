@@ -81,7 +81,7 @@ static int __long_header_encode(void *buf,
  * @return: buffer && buffer size
  * 
  */
-struct buf lpack_put_header(struct long_header * const lh_ptr, void *payload, size_t size)
+struct buf lpack_put_header(const struct long_header * const lh_ptr, void *payload, size_t size)
 {
     struct buf ret;
     size_t header_size = __long_header_size(lh_ptr);

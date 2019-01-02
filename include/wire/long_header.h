@@ -22,10 +22,11 @@ struct long_header {
  * put long header
  * @param lh_ptr: long header ptr
  * @param payload: payload ptr
+ * @param size: payload size
  * @return: buffer && buffer size
  * 
  */
-struct buf lpack_put_header(struct long_header * const lh_ptr, void *payload, size_t size);
+struct buf lpack_put_header(const struct long_header * const lh_ptr, void *payload, size_t size);
 
 /**
  * get long header
