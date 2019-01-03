@@ -7,13 +7,16 @@
 
 inline static size_t __long_header_size(const struct long_header * const hdr)
 {
-    return 1                                  // long header first byte
-        + 4                                   // version
-        + 1                                   // DCIL && SCIL
-        + hdr->dst_connid.size             // dst connid size
-        + hdr->src_connid.size             // src connid size
-        + varint_size(hdr->len)            // length
-        + packet_number_length(hdr->pnum); // packet number
+    return 1                                                  // long header first byte
+        + 4                                                   // version
+        + 1                                                   // DCIL && SCIL
+        + hdr->dst_connid.size                                // dst connid size
+        + hdr->src_connid.size                                // src connid size
+        + (hdr->is_init                                       // init packet token
+           ? (hdr->token.size + varint_size(hdr->token.size))
+           : 0)
+        + varint_size(hdr->len)                               // length
+        + packet_number_length(hdr->pnum);                    // packet number
 }
 
 static int __long_header_encode(void *buf,
