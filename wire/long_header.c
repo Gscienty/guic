@@ -141,7 +141,7 @@ struct long_header lpack_get_header(void *buf, size_t size)
     header.is_init = header.type == LONG_HEADER_PACKET_INITIAL;
 
     // decode version
-    bigendian_decode(buf + used_size, size - used_size, &header.version, 4);
+    bigendian_decode(&header.version, 4, buf + used_size, size - used_size);
     used_size += 4;
     if (used_size >= size)
         return header;
@@ -177,7 +177,7 @@ struct long_header lpack_get_header(void *buf, size_t size)
     // decode token
     if (header.is_init) {
         // decode token length
-        used_size += varint_decode(buf + used_size, size - used_size, &header.token.size);
+        used_size += varint_decode(&header.token.size, buf + used_size, size - used_size);
 
         // decode token
         header.token.ptr = malloc(header.token.size);
@@ -186,12 +186,12 @@ struct long_header lpack_get_header(void *buf, size_t size)
     }
 
     // decode length
-    used_size += varint_decode(buf + used_size, size - used_size, &header.len);
+    used_size += varint_decode(&header.len, buf + used_size, size - used_size);
     if (used_size >= size)
         return header;
 
     // decode packet number
-    used_size += bigendian_decode(buf + used_size, size - used_size, &header.pnum, pnum_size);
+    used_size += bigendian_decode(&header.pnum, pnum_size, buf + used_size, size - used_size);
     if (used_size > size)
         return header;
 

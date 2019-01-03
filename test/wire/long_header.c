@@ -121,7 +121,7 @@ GUIC_TEST(long_header, decode_header)
 {
 
     uint8_t buf[] = {
-        0xC1,
+        0xD1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x11,
         0x01, 0x02, 0x03, 0x04,
@@ -133,7 +133,7 @@ GUIC_TEST(long_header, decode_header)
 
     struct long_header header = lpack_get_header(buf, 22);
 
-    ASSERT(LONG_HEADER_PACKET_INITIAL, header.type, ==);
+    ASSERT(LONG_HEADER_PACKET_0RTT, header.type, ==);
     ASSERT(0xABABABAB, header.version, ==);
     ASSERT(4, header.dst_connid.size, ==);
     ASSERT(0x04030201, *((uint32_t *) header.dst_connid.bytes), ==);
@@ -148,7 +148,7 @@ GUIC_TEST(long_header, decode_header2)
 {
 
     uint8_t buf[] = {
-        0xC1,
+        0xD1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x01,
         0x05, 0x06, 0x07, 0x08,
@@ -159,7 +159,7 @@ GUIC_TEST(long_header, decode_header2)
 
     struct long_header header = lpack_get_header(buf, 22);
 
-    ASSERT(LONG_HEADER_PACKET_INITIAL, header.type, ==);
+    ASSERT(LONG_HEADER_PACKET_0RTT, header.type, ==);
     ASSERT(0xABABABAB, header.version, ==);
     ASSERT(0, header.dst_connid.size, ==);
     ASSERT(4, header.src_connid.size, ==);
@@ -173,7 +173,7 @@ GUIC_TEST(long_header, decode_header3)
 {
 
     uint8_t buf[] = {
-        0xC1,
+        0xD1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x10,
         0x01, 0x02, 0x03, 0x04,
@@ -184,7 +184,7 @@ GUIC_TEST(long_header, decode_header3)
 
     struct long_header header = lpack_get_header(buf, 22);
 
-    ASSERT(LONG_HEADER_PACKET_INITIAL, header.type, ==);
+    ASSERT(LONG_HEADER_PACKET_0RTT, header.type, ==);
     ASSERT(0xABABABAB, header.version, ==);
     ASSERT(4, header.dst_connid.size, ==);
     ASSERT(0x04030201, *((uint32_t *) header.dst_connid.bytes), ==);
@@ -198,7 +198,7 @@ GUIC_TEST(long_header, decode_header4)
 {
 
     uint8_t buf[] = {
-        0xC1,
+        0xD1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x00,
         0x53, 0x34,
@@ -208,7 +208,7 @@ GUIC_TEST(long_header, decode_header4)
 
     struct long_header header = lpack_get_header(buf, 22);
 
-    ASSERT(LONG_HEADER_PACKET_INITIAL, header.type, ==);
+    ASSERT(LONG_HEADER_PACKET_0RTT, header.type, ==);
     ASSERT(0xABABABAB, header.version, ==);
     ASSERT(0, header.dst_connid.size, ==);
     ASSERT(0, header.src_connid.size, ==);

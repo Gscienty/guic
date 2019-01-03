@@ -56,10 +56,10 @@ size_t crypto_decode(struct crypto * const frm, void * const buf, const size_t s
     size_t used_size = 0;
 
     // decode offset
-    used_size += varint_decode(buf + used_size, size - used_size, &frm->offset);
+    used_size += varint_decode(&frm->offset, buf + used_size, size - used_size);
 
     // decode len
-    used_size += varint_decode(buf + used_size, size - used_size, &frm->len);
+    used_size += varint_decode(&frm->len, buf + used_size, size - used_size);
 
     // decode data
     frm->data = malloc(frm->len);

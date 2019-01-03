@@ -104,7 +104,7 @@ struct short_header spack_get_header(void *buf, size_t size, size_t connid_size)
         return header;
     
     // decode pnum
-    bigendian_decode(buf + used_size, size - used_size, &header.pnum, pnum_size);
+    bigendian_decode(&header.pnum, pnum_size, buf + used_size, size - used_size);
     used_size += pnum_size;
     if (used_size > size)
         return header;

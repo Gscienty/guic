@@ -142,7 +142,7 @@ struct version_negotiation_header version_negotiation_get_header(void *buf, size
         return header;
 
     // decode version
-    bigendian_decode(buf, used_size, &header.version, 4);
+    bigendian_decode(&header.version, 4, buf, used_size);
     used_size += 4;
     if (used_size >= size)
         return header;
