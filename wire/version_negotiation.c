@@ -131,49 +131,49 @@ struct buf version_negotiation_put_header(const struct version_negotiation_heade
  * @return: version negotiation header
  * 
  */
-struct version_negotiation_header version_negotiation_get_header(void *buf, size_t size)
+size_t version_negotiation_get_header(void * const buf,
+                                      const size_t size,
+                                      struct version_negotiation_header * const hdr)
 {
-    struct version_negotiation_header header = {
-        .payload = NULL
-    };
     size_t used_size = 1;
     uint8_t byte;
     if (used_size >= size)
-        return header;
+        return 0;
 
+    hdr->version = 0;
     // decode version
-    bigendian_decode(&header.version, 4, buf, used_size);
+    bigendian_decode(&hdr->version, 4, buf, used_size);
     used_size += 4;
     if (used_size >= size)
-        return header;
+        return 0;
 
     // decode cil
     byte = *((uint8_t *) (buf + used_size));
     used_size += 1;
     if (used_size >= size)
-        return header;
+        return 0;
 
     // decode dst connid
     if ((byte & 0xF0) != 0x00) {
-        header.dst_connid.size = ((byte & 0xF0) >> 4) + 3;
-        memcpy(header.dst_connid.bytes, buf + used_size, header.dst_connid.size);
-        used_size += header.dst_connid.size;
+        hdr->dst_connid.size = ((byte & 0xF0) >> 4) + 3;
+        memcpy(hdr->dst_connid.bytes, buf + used_size, hdr->dst_connid.size);
+        used_size += hdr->dst_connid.size;
         if (used_size > size)
-            return header;
+            return 0;
     }
 
     // decode src connid
     if ((byte & 0x0F) != 0x00) {
-        header.src_connid.size = (byte & 0x0F) + 3;
-        memcpy(header.src_connid.bytes, buf + used_size, header.src_connid.size);
-        used_size += header.src_connid.size;
+        hdr->src_connid.size = (byte & 0x0F) + 3;
+        memcpy(hdr->src_connid.bytes, buf + used_size, hdr->src_connid.size);
+        used_size += hdr->src_connid.size;
         if (used_size > size)
-            return header;
+            return 0;
     }
 
-    header.payload = buf + used_size;
+    hdr->payload = buf + used_size;
 
-    return header;
+    return used_size;
 }
 
 static void __version_negotiation_payload_fill(void *buf, size_t size)
