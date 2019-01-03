@@ -9,7 +9,10 @@
  * @return: encode used size
  * 
  */
-int bigendian_encode(void *buf, size_t size, uint64_t val, size_t val_size)
+int bigendian_encode(void * const buf,
+                     const size_t size,
+                     const uint64_t val,
+                     const size_t val_size)
 {
     if (size < val_size)
         return -1;
@@ -26,14 +29,17 @@ int bigendian_encode(void *buf, size_t size, uint64_t val, size_t val_size)
 
 /**
  * decode value (big endian)
- * @param buf: buf
- * @param size: buf size
  * @param value: ref value
  * @param val_size: value size
- * @return: value size OR fail (< 0)
+ * @param buf: buf
+ * @param size: buf size
+ * @return: 0 is success
  *
  */
-int bigendian_decode(void *buf, size_t size, void *val, size_t val_size)
+int bigendian_decode(void * const val,
+                     const size_t val_size,
+                     void * const buf,
+                     const size_t size)
 {
     size_t i;
     if (size < val_size)

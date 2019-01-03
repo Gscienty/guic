@@ -10,13 +10,15 @@
 
 /**
  * decode variable integer
+ * @param val: decoded value
  * @param buf: readable buf
  * @param size: readable buf size
- * @param val: decoded value
  * @return: variable integer object's length OR VARINT_ERROR_VAL
  *
  */
-size_t varint_decode(const void *buf, const size_t size, uint64_t *val);
+size_t varint_decode(uint64_t * const val,
+                     const void *buf,
+                     const size_t size);
 
 /**
  * encode variable integer
@@ -26,7 +28,9 @@ size_t varint_decode(const void *buf, const size_t size, uint64_t *val);
  * @return: VARINT_ENCODE_ERROR OR encode used size
  *
  */
-int varint_encode(void * const buf, const size_t size, uint64_t val);
+int varint_encode(void * const buf,
+                  const size_t size,
+                  const uint64_t val);
 
 /**
  * get variable integer using buf's size
