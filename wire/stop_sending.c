@@ -52,9 +52,11 @@ size_t stop_sending_decode(struct stop_sending * const frm, void * const buf, co
 {
     size_t used_size = 0;
 
+    frm->stream_id = 0;
     // decode stream id
     used_size += varint_decode(&frm->stream_id, buf + used_size, size - used_size);
 
+    frm->err = 0;
     // decode err code
     bigendian_decode(&frm->err, 2, buf + used_size, size - used_size);
     used_size += 2;

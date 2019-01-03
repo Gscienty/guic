@@ -1,33 +1,33 @@
-#include "wire/max_stream_data.h"
+#include "wire/stream_data_blocked.h"
 #include "util/variable_integer.h"
 
-inline static size_t __size(const struct max_stream_data * const frm)
+inline static size_t __size(const struct stream_data_blocked * const frm)
 {
-    return varint_size(frm->stream_id) + varint_size(frm->max);
+    return varint_size(frm->stream_id) + varint_size(frm->limit);
 }
 
 /**
- * get max data frame size
- * @param frm: max data frame
+ * get limit data frame size
+ * @param frm: limit data frame
  * @return: frame size
  * 
  */
-size_t max_stream_data_size(const struct max_stream_data * const frm)
+size_t stream_data_blocked_size(const struct stream_data_blocked * const frm)
 {
     return __size(frm);
 }
 
 /**
- * encode max data frame
+ * encode limit data frame
  * @param buf: buf
  * @param size: buf size
- * @param frm: max data frame
+ * @param frm: limit data frame
  * @return: used size
  *
  */
-size_t max_stream_data_encode(void * const buf,
+size_t stream_data_blocked_encode(void * const buf,
                               const size_t size,
-                              const struct max_stream_data * const frm)
+                              const struct stream_data_blocked * const frm)
 {
     size_t used_size = 0;
 
@@ -35,7 +35,7 @@ size_t max_stream_data_encode(void * const buf,
     if (used_size >= size)
         return 0;
 
-    used_size += varint_encode(buf + used_size, size - used_size, frm->max);
+    used_size += varint_encode(buf + used_size, size - used_size, frm->limit);
     if (used_size > size)
         return 0;
 
@@ -43,14 +43,14 @@ size_t max_stream_data_encode(void * const buf,
 }
 
 /**
- * decode max data frame
- * @param frm: max data frame
+ * decode limit data frame
+ * @param frm: limit data frame
  * @param buf: buf
  * @param size: buf size
  * @return used size
  * 
  */
-size_t max_stream_data_decode(struct max_stream_data * const frm,
+size_t stream_data_blocked_decode(struct stream_data_blocked * const frm,
                               void * const buf,
                               const size_t size)
 {
@@ -62,9 +62,9 @@ size_t max_stream_data_decode(struct max_stream_data * const frm,
     if (used_size > size)
         return 0;
 
-    frm->max = 0;
-    // decode max
-    used_size += varint_decode(&frm->max, buf + used_size, size - used_size);
+    frm->limit = 0;
+    // decode limit
+    used_size += varint_decode(&frm->limit, buf + used_size, size - used_size);
     if (used_size > size)
         return 0;
 

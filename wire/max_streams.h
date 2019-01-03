@@ -1,7 +1,8 @@
-#include "wire/max_data.h"
+
+#include "wire/max_streams.h"
 #include "util/variable_integer.h"
 
-inline static size_t __size(const struct max_data * const frm)
+inline static size_t __size(const struct max_streams * const frm)
 {
     return varint_size(frm->max);
 }
@@ -12,7 +13,7 @@ inline static size_t __size(const struct max_data * const frm)
  * @return: frame size
  * 
  */
-size_t max_data_size(const struct max_data * const frm)
+size_t max_streams_size(const struct max_streams * const frm)
 {
     return __size(frm);
 }
@@ -25,9 +26,9 @@ size_t max_data_size(const struct max_data * const frm)
  * @return: used size
  *
  */
-size_t max_data_encode(void * const buf,
+size_t max_streams_encode(void * const buf,
                        const size_t size,
-                       const struct max_data * const frm)
+                       const struct max_streams * const frm)
 {
     size_t used_size = 0;
 
@@ -46,7 +47,7 @@ size_t max_data_encode(void * const buf,
  * @return used size
  * 
  */
-size_t max_data_decode(struct max_data * const frm,
+size_t max_streams_decode(struct max_streams * const frm,
                        void * const buf,
                        const size_t size)
 {

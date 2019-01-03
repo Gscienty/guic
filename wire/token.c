@@ -52,6 +52,7 @@ size_t token_decode(struct token * const frm, void * const buf, const size_t siz
 {
     size_t used_size = 0;
 
+    frm->len = 0;
     // decode len
     used_size += varint_decode(&frm->len, buf, size);
 

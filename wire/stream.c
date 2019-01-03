@@ -90,11 +90,13 @@ size_t stream_decode(struct stream * const frm,
     if (type & 0x01)
         frm->fin = 1;
 
+    frm->stream_id = 0;
     // decode stream id
     used_size += varint_decode(&frm->stream_id, buf + used_size, size - used_size);
     if (used_size >= size)
         return 0;
 
+    frm->off = 0;
     // decode offset
     if (0x04 & type) {
         used_size += varint_decode(&frm->off, buf + used_size, size - used_size);
@@ -102,6 +104,7 @@ size_t stream_decode(struct stream * const frm,
             return 0;
     }
 
+    frm->len = 0;
     // decode len
     if (0x02 & type) {
         used_size += varint_decode(&frm->len, buf + used_size, size - used_size);

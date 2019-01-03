@@ -58,13 +58,16 @@ size_t reset_decode(struct reset * const frm, void * const buf, const size_t siz
 {
     size_t used_size = 0;
 
+    frm->stream_id = 0;
     // decode stream id
     used_size += varint_decode(&frm->stream_id, buf + used_size, size - used_size);
 
+    frm->err = 0;
     // decode app err code
     bigendian_decode(&frm->err, 2, buf + used_size, size - used_size);
     used_size += 2;
 
+    frm->offset = 0;
     // decode final offset
     used_size += varint_decode(&frm->offset, buf + used_size, size - used_size);
 
