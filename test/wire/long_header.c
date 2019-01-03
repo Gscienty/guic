@@ -7,7 +7,7 @@ GUIC_TEST(long_header, encode_header)
 {
     int i;
     struct long_header header = {
-        .type = LONG_HEADER_PACKET_INITIAL,
+        .type = LONG_HEADER_PACKET_0RTT,
         .version = 0xABABABAB,
         .dst_connid = {
             .bytes = { 0x01, 0x02, 0x03, 0x04 },
@@ -23,12 +23,12 @@ GUIC_TEST(long_header, encode_header)
 
     void *pack = pack_malloc(LONG_HEADER_MAX_SIZE, 0);
 
-    struct buf buf = lpack_put_header(&header, pack, 0);
+    struct buf buf = lpack_put_header(pack, 0, &header);
 
     ASSERT(18, buf.size, ==);
 
     uint8_t expect[] = {
-        0xC1,
+        0xD1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x11,
         0x01, 0x02, 0x03, 0x04,
@@ -46,7 +46,7 @@ GUIC_TEST(long_header, encode_header2)
 {
     int i;
     struct long_header header = {
-        .type = LONG_HEADER_PACKET_INITIAL,
+        .type = LONG_HEADER_PACKET_0RTT,
         .version = 0xABABABAB,
         .dst_connid = {
             .bytes = { 0x00 },
@@ -62,12 +62,12 @@ GUIC_TEST(long_header, encode_header2)
 
     void *pack = pack_malloc(LONG_HEADER_MAX_SIZE, 0);
 
-    struct buf buf = lpack_put_header(&header, pack, 0);
+    struct buf buf = lpack_put_header(pack, 0, &header);
 
     ASSERT(14, buf.size, ==);
 
     uint8_t expect[] = {
-        0xC1,
+        0xD1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x01,
         0x05, 0x06, 0x07, 0x08,
@@ -84,7 +84,7 @@ GUIC_TEST(long_header, encode_header3)
 {
     int i;
     struct long_header header = {
-        .type = LONG_HEADER_PACKET_INITIAL,
+        .type = LONG_HEADER_PACKET_0RTT,
         .version = 0xABABABAB,
         .dst_connid = {
             .bytes = { 0x00 },
@@ -100,12 +100,12 @@ GUIC_TEST(long_header, encode_header3)
 
     void *pack = pack_malloc(LONG_HEADER_MAX_SIZE, 0);
 
-    struct buf buf = lpack_put_header(&header, pack, 0);
+    struct buf buf = lpack_put_header(pack, 0, &header);
 
     ASSERT(10, buf.size, ==);
 
     uint8_t expect[] = {
-        0xC1,
+        0xD1,
         0xAB, 0xAB, 0xAB, 0xAB,
         0x00,
         0x53, 0x34,
@@ -131,7 +131,8 @@ GUIC_TEST(long_header, decode_header)
         0x01, 0x02, 0x03, 0x04
     };
 
-    struct long_header header = lpack_get_header(buf, 22);
+    struct long_header header;
+    lpack_get_header(&header, buf, 22);
 
     ASSERT(LONG_HEADER_PACKET_0RTT, header.type, ==);
     ASSERT(0xABABABAB, header.version, ==);
@@ -157,7 +158,8 @@ GUIC_TEST(long_header, decode_header2)
         0x01, 0x02, 0x03, 0x04
     };
 
-    struct long_header header = lpack_get_header(buf, 22);
+    struct long_header header;
+    lpack_get_header(&header, buf, 22);
 
     ASSERT(LONG_HEADER_PACKET_0RTT, header.type, ==);
     ASSERT(0xABABABAB, header.version, ==);
@@ -182,7 +184,8 @@ GUIC_TEST(long_header, decode_header3)
         0x01, 0x02, 0x03, 0x04
     };
 
-    struct long_header header = lpack_get_header(buf, 22);
+    struct long_header header;
+    lpack_get_header(&header, buf, 22);
 
     ASSERT(LONG_HEADER_PACKET_0RTT, header.type, ==);
     ASSERT(0xABABABAB, header.version, ==);
@@ -206,7 +209,8 @@ GUIC_TEST(long_header, decode_header4)
         0x01, 0x02, 0x03, 0x04
     };
 
-    struct long_header header = lpack_get_header(buf, 22);
+    struct long_header header;
+    lpack_get_header(&header, buf, 22);
 
     ASSERT(LONG_HEADER_PACKET_0RTT, header.type, ==);
     ASSERT(0xABABABAB, header.version, ==);

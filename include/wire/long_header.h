@@ -15,8 +15,9 @@ struct long_header {
     uint64_t len;
     uint32_t pnum;
 
-    uint8_t is_init;
     struct buf token;
+
+    struct conn_id_t ori_dst_connid;
 
     void *payload;
 };
@@ -29,15 +30,20 @@ struct long_header {
  * @return: buffer && buffer size
  * 
  */
-struct buf lpack_put_header(const struct long_header * const lh_ptr, void *payload, size_t size);
+struct buf lpack_put_header(void * const payload,
+                            const size_t size,
+                            const struct long_header * const hdr);
 
 /**
  * get long header
+ * @param hdr: long header
  * @param buf: buf
  * @param size: buf size
  * @return: long header
  * 
  */
-struct long_header lpack_get_header(void *buf, size_t size);
+size_t lpack_get_header(struct long_header * const hdr,
+                        void * const buf,
+                        const size_t size);
 
 #endif
