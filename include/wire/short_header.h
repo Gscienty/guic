@@ -17,22 +17,28 @@ struct short_header {
 
 /**
  * put short header
- * @param lh_ptr: short header ptr
  * @param payload: payload ptr
  * @param size: payload size
+ * @param hdr: short header
  * @return: buffer && buffer size
  * 
  */
-struct buf spack_put_header(const struct short_header * const sh_ptr, void *payload, size_t size);
+struct buf spack_put_header(void * const payload,
+                            const size_t size,
+                            const struct short_header * const hdr);
 
 /**
  * get short header
+ * @param hdr: short header
  * @param buf: buf
  * @param size: buf size
  * @param connid_size: dst connid size
  * @return: short header
  * 
  */
-struct short_header spack_get_header(void *buf, size_t size, size_t connid_size);
+size_t spack_get_header(struct short_header * const hdr,
+                        void *const buf,
+                        const size_t size,
+                        const size_t connid_size);
 
 #endif

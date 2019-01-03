@@ -17,7 +17,7 @@ GUIC_TEST(short_header, encode)
     uint8_t expect[] = { 0x65, 0x01, 0x02, 0x03, 0x04, 0x13, 0x34 };
     
     void *payload = pack_malloc(SHORT_HEADER_MAX_SIZE, 0);
-    struct buf buf = spack_put_header(&header, payload, 0);
+    struct buf buf = spack_put_header(payload, 0, &header);
     for (i = 0; i < buf.size; i++) {
         ASSERT(expect[i], ((uint8_t *) buf.ptr)[i], ==);
     }
@@ -27,7 +27,8 @@ GUIC_TEST(short_header, encode)
 GUIC_TEST(short_header, decode)
 {
     uint8_t buf[] = { 0x65, 0x01, 0x02, 0x03, 0x04, 0x13, 0x34 };
-    struct short_header header = spack_get_header(buf, sizeof(buf), 4);
+    struct short_header header;
+    spack_get_header(&header, buf, sizeof(buf), 4);
 
     ASSERT(0, header.spin, !=);
     ASSERT(0, header.key_phase, !=);
