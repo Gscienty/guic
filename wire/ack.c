@@ -105,13 +105,16 @@ size_t ack_encode(void * const buf,
 
 size_t ack_decode(struct ack * const frm,
                   void * const buf,
-                  const size_t size)
+                  const size_t size,
+                  const uint8_t type)
 {
     uint64_t largest = 0;
     uint64_t block = 0;
     uint64_t gap = 0;
     size_t used_size = 0;
     uint64_t i;
+
+    frm->type = type;
 
     used_size += varint_decode(&largest,
                                buf + used_size,

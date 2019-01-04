@@ -33,6 +33,7 @@ size_t ack_encode(void * const buf,
 
 size_t ack_decode(struct ack * const frm,
                   void * const buf,
-                  const size_t size);
+                  const size_t size,
+                  const uint8_t type);
 
 #endif
