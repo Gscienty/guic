@@ -3,50 +3,7 @@
 #include "wire/pack_store.h"
 #include <string.h>
 
-GUIC_SUPPORT_VERSION(0x00000000);
-
-
-#ifndef DEBUG
-// support version
-
-#endif
-
-static struct __guic_support_version *__start = NULL;
-static struct __guic_support_version *__end = NULL;
-static int __support_version_size = 0;
-
-static void __support_version_init()
-{
-    struct __guic_support_version *itr;
-
-    if (__start != NULL && __end != NULL)
-        return;
-
-    __support_version_size = 0;
-    __start = &GUIC_SUPPORT_VERSION_NAME(0x00000000);
-    __end = &GUIC_SUPPORT_VERSION_NAME(0x00000000);
-
-    while (1) {
-        if ((__start - 1)->magic != GUIC_SUPPORT_VERSION_MAGIC)
-            break;
-        __start--;
-    }
-
-    while (1) {
-        if ((__end + 1)->magic != GUIC_SUPPORT_VERSION_MAGIC)
-            break;
-        __end++;
-    }
-    __end++;
-
-    for (itr = __start; itr != __end; itr++) {
-        if (itr->version != 0x00000000)
-            __support_version_size++;
-    }
-}
-
-inline
-static size_t
+inline static size_t
 __version_negotiation_header_size(const struct version_negotiation_header * const hdr)
 {
     return 1 + 4 + 1 + hdr->dst_connid.size + hdr->src_connid.size;
@@ -111,7 +68,6 @@ struct buf version_negotiation_put_header(const struct version_negotiation_heade
                                           size_t size)
 {
     size_t header_size;
-    __support_version_init();
 
     header_size = __version_negotiation_header_size(hdr);
     __version_negotiation_header_encode(hdr, payload - header_size, header_size);
@@ -174,41 +130,4 @@ size_t version_negotiation_get_header(void * const buf,
     hdr->payload = buf + used_size;
 
     return used_size;
-}
-
-static void __version_negotiation_payload_fill(void *buf, size_t size)
-{
-    struct __guic_support_version *itr;
-    size_t used_size = 0;
-
-    for (itr = __start; itr != __end; itr++) {
-        if (itr->version == 0x00000000)
-            continue;
-        bigendian_encode(buf + used_size, size - used_size, itr->version, 4);
-        used_size += 4;
-    }
-}
-
-/**
- * construct version negotiation payload
- * @return: version negotiation payload
- * 
- */
-struct buf version_negotiation_construct()
-{
-    struct buf ret = {
-        .size = 0,
-        .ptr = NULL
-    };
-    size_t payload_size = __support_version_size * 4;
-    void *buf = pack_malloc(VERSION_NEGOTIATION_HEADER_MAX_SIZE, payload_size);
-    if (buf == NULL)
-        return ret;
-
-    ret.size = payload_size;
-    ret.ptr = buf;
-
-    __version_negotiation_payload_fill(buf, payload_size);
-
-    return ret;
 }

@@ -5,21 +5,6 @@
 #include "wire/type.h"
 #include <stdint.h>
 
-struct __guic_support_version {
-    uint32_t version;
-    unsigned int magic;
-};
-
-#define GUIC_SUPPORT_VERSION_MAGIC 0x5e44104
-#define GUIC_SUPPORT_VERSION_NAME(x) __guic_support_version__##x
-#define GUIC_SUPPORT_VERSION_SECTION __attribute__((used, section(".support_version"), aligned(1)))
-#define GUIC_SUPPORT_VERSION(x) \
-    static struct __guic_support_version GUIC_SUPPORT_VERSION_NAME(x) \
-    GUIC_SUPPORT_VERSION_SECTION = { \
-        .version = x, \
-        .magic = GUIC_SUPPORT_VERSION_MAGIC \
-    }
-
 struct version_negotiation_header {
     version_t version;
     struct conn_id_t dst_connid;
@@ -50,13 +35,6 @@ struct buf version_negotiation_put_header(const struct version_negotiation_heade
 size_t version_negotiation_get_header(void * const buf,
                                       const size_t size,
                                       struct version_negotiation_header * const hdr);
-
-/**
- * construct version negotiation payload
- * @return: version negotiation payload
- * 
- */
-struct buf version_negotiation_construct();
 
 
 #endif
