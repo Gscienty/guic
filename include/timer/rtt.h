@@ -17,7 +17,8 @@ struct rtt_status {
 #define RTTVAR_SHIFT 2
 
 #define SRTT_BASE 0
-#define SRTT_DEFAULT 3
+#define RTT_DEFAULT 3
+#define SRTT_DEFAULT 6
 #define MIN_TV 2
 #define MAX_TV 128
 
