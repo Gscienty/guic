@@ -8,7 +8,7 @@
 int rtt_status_init(struct rtt_status * const rtt)
 {
     rtt->srtt = SRTT_BASE;
-    rtt->rttvar = SRTT_DEFAULT << 3;
+    rtt->rttvar = RTT_DEFAULT << 3;
     rtt->rtt_min = MIN_TV;
     rtt->rto = ((SRTT_BASE >> 2) + (SRTT_DEFAULT << 2)) >> 1;
     if (rtt->rto < MIN_TV)
