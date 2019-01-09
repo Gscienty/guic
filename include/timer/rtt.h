@@ -4,10 +4,10 @@
 #include "timer/type.h"
 
 struct rtt_status {
-    int64_t srtt;
-    int64_t rttvar;
-    int64_t rto;
-    int64_t rtt_min;
+    microtime_t srtt;
+    microtime_t rttvar;
+    microtime_t rto;
+    microtime_t rtt_min;
 };
 
 #define RTT_SCALE 8
