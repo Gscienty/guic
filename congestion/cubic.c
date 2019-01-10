@@ -2,6 +2,8 @@
 #include <math.h>
 #include <stddef.h>
 
+#include <stdio.h>
+
 /**
  * init cubic
  * @param cubic: cubic status
@@ -28,6 +30,7 @@ inline static double __alpha()
  * @param cubic: cubic status
  * @param acked: acked bytes count
  * @param cwnd: congestion window
+ * @param mss: mss
  * @param cur: event time
  * @param delay: delay time
  *
@@ -35,12 +38,12 @@ inline static double __alpha()
 bytecount_t cubic_received_ack(struct cubic * const cubic,
                                bytecount_t acked,
                                bytecount_t cwnd,
+                               bytecount_t mss,
                                microtime_t cur,
                                microtime_t delay)
 {
     double t;
     bytecount_t target;
-    bytecount_t max_cnt;
 
     cubic->ack_cnt += acked;
 
@@ -62,28 +65,21 @@ bytecount_t cubic_received_ack(struct cubic * const cubic,
 
     t = (cur + delay - cubic->epoch_start) / DOUBLE_MICROSECONDS;
     target = cubic->origin_point
-        + CUBIC_FACTOR_C * pow(t - cubic->time_peroid, 3.0);
+        + pow(t - cubic->time_peroid, 3.0) * mss * CUBIC_FACTOR_C;
 
-    if (target > cwnd)
-        cubic->cnt = cwnd / (target - cwnd);
-    else
-        cubic->cnt = 100 * cwnd;
-
-    cubic->cwnd += __alpha() * (cubic->ack_cnt / cwnd);
+    cubic->cwnd += __alpha() * cubic->ack_cnt * mss / cubic->cwnd;
     cubic->ack_cnt = 0;
 
-    if (cubic->cwnd > cwnd) {
-        max_cnt = cwnd / (cubic->cwnd - cwnd);
-        if (cubic->cnt > max_cnt)
-            cubic->cnt = max_cnt;
-    }
+    if (target < cubic->cwnd)
+        target = cubic->cwnd;
 
-    return cubic->cnt;
+    return target;
 }
 
 /**
  * packet loss
  * @param cubic: cubic status
+ * @param cwnd: congestion window
  * @return: ssthresh
  *
  */

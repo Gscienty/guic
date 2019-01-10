@@ -33,6 +33,7 @@ void cubic_init(struct cubic * const cubic);
  * @param cubic: cubic status
  * @param acked: acked bytes count
  * @param cwnd: congestion window
+ * @param mss: mss
  * @param cur: event time
  * @param delay: delay time
  *
@@ -40,6 +41,7 @@ void cubic_init(struct cubic * const cubic);
 bytecount_t cubic_received_ack(struct cubic * const cubic,
                                bytecount_t acked,
                                bytecount_t cwnd,
+                               bytecount_t mss,
                                microtime_t cur,
                                microtime_t delay);
 
