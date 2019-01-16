@@ -45,6 +45,13 @@ enum stream_type {
     __STREAM_TYPE_MAX
 };
 
+enum encrypt_level {
+    ENCRYPT_LEVEL_UNSPEC,
+    ENCRYPT_LEVEL_INITIAL,
+    ENCRYPT_LEVEL_HANDSHAKE,
+    ENCRYPT_LEVEL_1RTT
+};
+
 typedef uint32_t version_t;
 typedef uint32_t packet_number_t;
 typedef uint64_t stream_id_t;
