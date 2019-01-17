@@ -42,5 +42,12 @@ void ll_insert_before(struct llnode * const place,
 void ll_insert_after(struct llnode * const place,
                      struct llnode * const newly);
 
+/**
+ * remove entity
+ * @param : removed node
+ *
+ */
+void ll_remove(struct llnode * const node);
+
 
 #endif
