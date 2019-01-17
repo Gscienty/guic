@@ -37,6 +37,15 @@ struct rbroot *rbtree_create_root();
 struct rbnode *rbtree_create_node(const struct rbroot * const root, size_t size);
 
 /**
+ * init rbtree node
+ * @param root: rbtree root node
+ * @param node: rbtree node
+ * 
+ */
+void rbtree_node_init(const struct rbroot * const root,
+                      struct rbnode * const node);
+
+/**
  * fix newly rbtree node
  * @param root: rbtree root
  * @param node: newly rbtree node

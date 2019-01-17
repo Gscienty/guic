@@ -38,6 +38,21 @@ struct rbnode *rbtree_create_node(const struct rbroot *const root, size_t size)
     return ret;
 }
 
+/**
+ * init rbtree node
+ * @param root: rbtree root node
+ * @param node: rbtree node
+ * 
+ */
+void rbtree_node_init(const struct rbroot * const root,
+                      struct rbnode * const node)
+{
+    node->color  = RBTREE_RED;
+    node->left   = (struct rbnode *) &root->nil;
+    node->right  = (struct rbnode *) &root->nil;
+    node->parent = (struct rbnode *) &root->nil;
+}
+
 static void __rbtree_left_rotate(struct rbroot * const root, struct rbnode *node)
 {
     struct rbnode *right = node->right;
