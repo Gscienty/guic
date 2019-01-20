@@ -20,8 +20,8 @@ void recv_packet_history_init(struct recv_packet_history * const history)
  * @param pnum: packet number
  * 
  */
-int history_received_packet(struct recv_packet_history * const history,
-                            packet_number_t pnum)
+int recv_packet_received(struct recv_packet_history * const history,
+                         packet_number_t pnum)
 {
     struct llnode *new_interval;
     struct llnode *hele;
