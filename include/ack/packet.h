@@ -3,8 +3,15 @@
 
 #include "timer/type.h"
 #include "util/linked_list.h"
+#include "util/rbtree.h"
 #include "wire/type.h"
 #include "wire/ack.h"
+#include <stdbool.h>
+
+struct packet_retrans_as_llnode {
+    struct llnode node;
+    packet_number_t pnum;
+};
 
 struct packet {
     packet_number_t pnum;
@@ -18,8 +25,14 @@ struct packet {
 
     int allow_retrans;
     int included_flight;
-    int is_retrans;
-    packet_number_t retrains_pnum;
+    struct llnode retrans_as;
+    bool is_retrans;
+    packet_number_t retrans_pnum;
+};
+
+struct packet_llnode {
+    struct llnode node;
+    const struct packet * packet;
 };
 
 struct recv_packet_llnode {
@@ -35,8 +48,25 @@ struct recv_packet_history {
     int size;
 };
 
+struct sent_packet_node {
+    struct llnode llnode;
+    struct rbnode rbnode;
+
+    const struct packet *packet;
+};
+
+struct sent_packet_history {
+    struct llnode list;
+    struct rbroot dict;
+
+    int packets_count;
+    int crypto_packets_count;
+
+    struct llnode *first;
+};
+
 /**
- * init packet history
+ * init recv packet history
  * @param history: packet history
  * 
  */
@@ -48,8 +78,8 @@ void recv_packet_history_init(struct recv_packet_history * const history);
  * @param pnum: packet number
  * 
  */
-int history_received_packet(struct recv_packet_history * const history,
-                            packet_number_t pnum);
+int recv_packet_received(struct recv_packet_history * const history,
+                         packet_number_t pnum);
 
 /**
  * delete below
@@ -68,5 +98,60 @@ void recv_packet_delete_below(struct recv_packet_history * const history,
  */
 struct ack_block *
 recv_packet_generate_ack(const struct recv_packet_history * const history);
+
+/**
+ * init sent packet history
+ * @param history: history
+ * 
+ */
+void sent_packet_history_init(struct sent_packet_history * const history);
+
+/**
+ * sent packet
+ * @param history: history
+ * @param packet: packet
+ * 
+ */
+struct llnode *sent_packet_sent(struct sent_packet_history * const history,
+                                const struct packet *packet);
+
+/**
+ * retransmission sent packet
+ * @param history: history
+ * @param head: packet list
+ * @param retrans_pnum: retransmission packet number
+ * 
+ */
+void sent_packet_retransmission(struct sent_packet_history * const history,
+                                struct llnode * const head,
+                                packet_number_t retrans_pnum);
+
+/**
+ * get packet
+ * @param history: history
+ * @param pnum: packet number
+ * @return packet
+ * 
+ */
+const struct packet *sent_packet_get(struct sent_packet_history * const history,
+                                     packet_number_t pnum);
+
+/**
+ * mark retransmission
+ * @param history: history
+ * @param pnum: packet number
+ * 
+ */
+void sent_packet_mark_cannot_retrans(struct sent_packet_history * const history,
+                                     packet_number_t pnum);
+
+/**
+ * remove packet
+ * @param history: history
+ * @param pnum: packet number
+ * 
+ */
+void sent_packet_remove(struct sent_packet_history * const history,
+                        packet_number_t pnum);
 
 #endif
