@@ -20,6 +20,20 @@ struct rbroot *rbtree_create_root()
 }
 
 /**
+ * init rbtree root
+ * @param: root
+ * 
+ */
+void rbtree_root_init(struct rbroot * const root)
+{
+    root->nil.color  = RBTREE_BLACK;
+    root->nil.left   = &root->nil;
+    root->nil.right  = &root->nil;
+    root->nil.parent = &root->nil;
+    root->root       = &root->nil;
+}
+
+/**
  * create the rbtree node
  * @param root: rbtree root node
  * @param size: rbtree node data size

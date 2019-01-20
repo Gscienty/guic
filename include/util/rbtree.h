@@ -29,6 +29,13 @@ struct rbroot {
 struct rbroot *rbtree_create_root();
 
 /**
+ * init rbtree root
+ * @param: root
+ * 
+ */
+void rbtree_root_init(struct rbroot * const root);
+
+/**
  * create the rbtree node
  * @param root: rbtree root node
  * @param size: rbtree node data size
